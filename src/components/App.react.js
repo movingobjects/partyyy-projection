@@ -11,8 +11,7 @@ export default class App extends React.Component {
 
     this.state = {
       config: null,
-      serverConnected: false,
-      serverMessages: []
+      serverConnected: false
     };
 
     this.loadConfig(`config.json`);
@@ -22,6 +21,12 @@ export default class App extends React.Component {
   onConfigLoad = (config) => {
 
     this.setState({ config });
+
+  }
+
+  onServerMessage = (message) => {
+
+    console.log(`Message from Server: "${message}"`);
 
   }
 
@@ -38,41 +43,27 @@ export default class App extends React.Component {
 
   connectToServer(url) {
 
-    const ws = new WebSocket(url);
+    this.socket = new WebSocket(url);
 
-    ws.onopen = () => {
-      this.setState({
-        serverConnected: true
-      })
+    this.socket.onopen = () => {
+      this.setState({ serverConnected: true });
     }
-    ws.onclose = () => {
-      this.setState({
-        serverConnected: false
-      })
+    this.socket.onclose = () => {
+      this.setState({ serverConnected: false });
     }
-    ws.onerror = () => {
-      this.setState({
-        serverConnected: false
-      })
-    }
-    ws.onmessage = ({ data }) => {
-      this.setState({
-        serverMessages: [
-          ...this.state.serverMessages,
-          data
-        ]
-      })
+    this.socket.onerror = () => {
+      this.setState({ serverConnected: false });
     }
 
-    this.socket = ws;
+    this.socket.onmessage = ({ data }) => this.onServerMessage(data);
 
   }
 
-  sendMessageToServer() {
+  sendToServer(message) {
 
     if (!this.socket) return;
 
-    this.socket.send(`Hello from PARTYYY PROJECTION`)
+    this.socket.send(message)
 
   }
 
@@ -81,31 +72,7 @@ export default class App extends React.Component {
     if (!this.state.config) return null;
 
     return (
-      <main>
-
-        {this.state.serverConnected && (
-
-          <ul>
-          {this.state.serverMessages.map((msg, i) => (
-            <li key={`msg-${i}`}>{msg}</li>
-          ))}
-          </ul>
-        )}
-        {this.state.serverConnected && (
-          <button
-            onClick={() => this.sendMessageToServer() }>
-            Send message
-          </button>
-        )}
-
-        {!this.state.serverConnected && (
-          <button
-            onClick={() => this.connectToServer(this.state.config.serverUrl)}>
-            Connect to Server
-          </button>
-        )}
-
-      </main>
+      <ProjectionView />
     );
 
   }
