@@ -72,7 +72,7 @@ export default class App extends React.Component {
 
     if (!this.socket) return;
 
-    this.socket.send("Hello again!")
+    this.socket.send(`Hello from PARTYYY PROJECTION`)
 
   }
 
