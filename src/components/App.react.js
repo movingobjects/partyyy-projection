@@ -2,7 +2,6 @@
 import * as React from 'react';
 
 import ProjectionView from './ProjectionView.react';
-import SocketServer from '../utils/SocketServer';
 
 export default class App extends React.Component {
 
