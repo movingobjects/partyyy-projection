@@ -1,19 +1,15 @@
 
+import DebugView from './components/DebugView';
 import VisView from './components/VisView';
 
 export default class App {
 
-  constructor(elemWrap) {
+  constructor() {
 
-    this.initVis(this.makeElem('vis-view', elemWrap));
+    this.vis   = new VisView(document.getElementById('vis'));
+    this.debug = new DebugView(document.getElementById('debug'));
 
     this.loadConfig(`config.json`);
-
-  }
-
-  initVis(elem) {
-
-    this.visView = new VisView(elem);
 
   }
 
@@ -21,12 +17,14 @@ export default class App {
 
     App.config = config;
 
+    this.debug.log('Config loaded');
+
     this.connectToServer(config.serverUrl);
 
   }
   onServerMessage = (message) => {
 
-    console.log(`Message from Server: "${message}"`);
+    this.debug.log(`Message from Server: "${message}"`);
 
   }
 
@@ -36,7 +34,7 @@ export default class App {
       .then((response) => response.json())
       .then((json) => this.onConfigLoad(json))
       .catch((error) => {
-        console.log(error);
+        this.debug.log(`Error loading config: ${error}`);
       })
 
   }
@@ -46,13 +44,13 @@ export default class App {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
-      console.log(`Server open`);
+      this.debug.log(`Server connection opened`);
     }
     this.socket.onclose = () => {
-      console.log(`Server close`);
+      this.debug.log(`Server connection closed`);
     }
     this.socket.onerror = () => {
-      console.log(`Server error`);
+      this.debug.log(`Server connection error`);
     }
 
     this.socket.onmessage = ({ data }) => this.onServerMessage(data);
