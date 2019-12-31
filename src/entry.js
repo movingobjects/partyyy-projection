@@ -1,11 +1,6 @@
 
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import './styles/style.scss';
+import App from './App';
 
-import style from "./styles/style.scss";
-import App from './components/App.react';
-
-ReactDOM.render(
-  <App />,
-  document.getElementById('app')
-);
+const elem = document.getElementById('app'),
+      app  = new App(elem);

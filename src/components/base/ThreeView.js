@@ -1,10 +1,9 @@
 
-import * as React from 'react';
 import { defaultsDeep, debounce } from 'lodash';
 
-import AnimComponent from './AnimComponent.react'
+import AnimView from './AnimView'
 
-const CANVAS_MIN_SIZED_LEN = 500;
+const CANVAS_MIN_SIZED_LEN = 50;
 
 const DEFAULT_OPTS = {
   className: 'three-component',
@@ -28,18 +27,21 @@ const DEFAULT_OPTS = {
   }
 };
 
-export default class ThreeComponent extends AnimComponent {
+export default class ThreeView extends AnimView {
 
-  constructor(opts, props) {
+  constructor(elem, opts) {
 
-    super(props);
+    super();
 
-    this.sized = false;
-    this.w     = 1;
-    this.h     = 1;
+    this.elem  = elem;
     this.opts  = defaultsDeep({ }, opts, DEFAULT_OPTS);
 
+    this.sized = false;
+    this.w     = -1;
+    this.h     = -1;
+
     this.debouncedResize = debounce(() => this.updateSize(), 100);
+    window.addEventListener('resize', this.debouncedResize);
 
     this.initThree();
 
@@ -53,11 +55,25 @@ export default class ThreeComponent extends AnimComponent {
       scene
     } = this.opts;
 
-    let v3LookAt   = new THREE.Vector3(camera.lookAtX, camera.lookAtY, camera.lookAtZ);
+    let lookAt = new THREE.Vector3(
+      camera.lookAtX,
+      camera.lookAtY,
+      camera.lookAtZ
+    );
 
-    this.camera    = new THREE.PerspectiveCamera(camera.fov, 1, camera.near, camera.far);
-    this.camera.position.set(camera.x, camera.y, camera.z);
-    this.camera.lookAt(v3LookAt);
+    this.camera = new THREE.PerspectiveCamera(
+      camera.fov,
+      1,
+      camera.near,
+      camera.far
+    );
+
+    this.camera.position.set(
+      camera.x,
+      camera.y,
+      camera.z
+    );
+    this.camera.lookAt(lookAt);
 
     this.scene     = new THREE.Scene();
     this.scene.fog = scene.fog;
@@ -68,12 +84,15 @@ export default class ThreeComponent extends AnimComponent {
       antialias: renderer.antialias
     });
 
+    if (this.elem) {
+      this.elem.appendChild(this.renderer.domElement);
+    }
+
   }
 
   get domElem() {
     return this.renderer.domElement;
   }
-
   get canvasW() {
     return this.domElem.clientWidth;
   }
@@ -90,20 +109,7 @@ export default class ThreeComponent extends AnimComponent {
     this.renderer.render(this.scene, this.camera);
 
   }
-
   onResize(w, h) { }
-
-  dispose() {
-
-    if (this.elem) {
-      this.elem.removeChild(this.renderer.domElement);
-    }
-
-    this.scene    = null;
-    this.camera   = null;
-    this.renderer = null;
-
-  }
 
   updateSize() {
 
@@ -125,42 +131,15 @@ export default class ThreeComponent extends AnimComponent {
 
   }
 
-  componentDidMount() {
-
-    window.addEventListener('resize', this.debouncedResize);
+  dispose() {
 
     if (this.elem) {
-      this.elem.appendChild(this.renderer.domElement);
+      this.elem.removeChild(this.renderer.domElement);
     }
 
-    this.sized = false;
-
-    super.componentDidMount();
-
-  }
-  componentWillUnmount() {
-
-    window.removeEventListener('resize', this.debouncedResize);
-
-    super.componentWillUnmount();
-
-    this.dispose();
-
-  }
-
-  render() {
-
-    return (
-      <div
-        className={this.opts.className}
-        ref={(elem) => {
-          this.elem = elem;
-        }}
-        onDragEnter={(e) => this.props.dragEnterHandler(e)}
-        onDragOver={(e) => this.props.dragOverHandler(e)}
-        onDragLeave={(e) => this.props.dragLeaveHandler(e)}
-        onDrop={(e) => this.props.onArtworkUpload(e)} />
-    );
+    this.scene    = null;
+    this.camera   = null;
+    this.renderer = null;
 
   }
 

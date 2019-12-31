@@ -36,8 +36,7 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               presets: [
-                '@babel/preset-env',
-                '@babel/preset-react'
+                '@babel/preset-env'
               ],
               plugins: [
                 'lodash',
@@ -157,8 +156,6 @@ module.exports = {
   },
 
   externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
     three: 'THREE'
   },
 
@@ -171,14 +168,6 @@ module.exports = {
       {
         from: 'node_modules/three/build/three.min.js',
         to: './resources/externals/three/'
-      },
-      {
-        from: `node_modules/react/umd/react.${isDev ? 'development' : 'production.min'}.js`,
-        to: './resources/externals/react/'
-      },
-      {
-        from: `node_modules/react-dom/umd/react-dom.${isDev ? 'development' : 'production.min'}.js`,
-        to: './resources/externals/react/'
       }
     ]),
     new HtmlWebpackPlugin({
@@ -188,9 +177,7 @@ module.exports = {
     }),
     new HtmlWebpackTagsPlugin({
       tags: [
-        `resources/externals/three/three.min.js`,
-        `resources/externals/react/react.${isDev ? 'development' : 'production.min'}.js`,
-        `resources/externals/react/react-dom.${isDev ? 'development' : 'production.min'}.js`
+        `resources/externals/three/three.min.js`
       ],
       append: false
     }),

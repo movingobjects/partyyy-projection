@@ -1,12 +1,11 @@
 
-import * as React from 'react';
 import * as _ from 'lodash';
 import { random, maths, colors } from 'varyd-utils';
 
-import ThreeComponent from './base/ThreeComponent.react';
+import ThreeView from './base/ThreeView';
 import NoisePlanes from '../three/NoisePlanes.three';
 
-const NEXT_SCENE_INTERVAL = {
+const AUTO_ADVANCE_INTERVAL = {
   min: 3000,
   max: 9000
 }
@@ -18,21 +17,24 @@ const CAM_SETTINGS = {
   fov: { min: -20, max: 20 }
 }
 
-export default class ProjectionView extends ThreeComponent {
+export default class VisView extends ThreeView {
 
-  constructor(props) {
+  constructor(elem) {
 
-    super({
+    super(elem, {
       className: 'projection-view'
-    }, props);
+    });
 
-    this.initScene();
+    this.autoAdvancing = false;
+
+    this.initScenes();
     this.resetCamTrgt();
+
     this.nextScene();
 
   }
 
-  initScene() {
+  initScenes() {
 
     this.noisePlanes = new NoisePlanes();
     this.scene.add(this.noisePlanes);
@@ -43,18 +45,22 @@ export default class ProjectionView extends ThreeComponent {
     this.resetCamTrgt();
     this.noisePlanes.randomizeView();
 
-    const delay = random.num(NEXT_SCENE_INTERVAL.min, NEXT_SCENE_INTERVAL.max);
-
-    setTimeout(() => {
-      this.nextScene()
-    }, delay);
-
   }
 
   onAnimFrame(timeNow) {
 
+    if (this.autoAdvancing) {
+      if (!this.timeAutoAdvance) {
+        const delay = random.num(AUTO_ADVANCE_INTERVAL.min, AUTO_ADVANCE_INTERVAL.max);
+        this.timeAutoAdvance = timeNow + delay;
+      }
+      if (timeNow >= this.timeAutoAdvance) {
+        this.nextScene();
+      }
+    }
+
     this.easeCamera();
-    this.noisePlanes.nextFrame(timeNow);
+    this.noisePlanes.nextFrame(timeNow, this.timeElapsed);
 
     super.onAnimFrame(timeNow);
 

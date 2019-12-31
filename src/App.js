@@ -1,29 +1,29 @@
 
-import * as React from 'react';
+import VisView from './components/VisView';
 
-import ProjectionView from './ProjectionView.react';
+export default class App {
 
-export default class App extends React.Component {
+  constructor(elemWrap) {
 
-  constructor() {
-
-    super();
-
-    this.state = {
-      config: null,
-      serverConnected: false
-    };
+    this.initVis(this.makeElem('vis-view', elemWrap));
 
     this.loadConfig(`config.json`);
 
   }
 
-  onConfigLoad = (config) => {
+  initVis(elem) {
 
-    this.setState({ config });
+    this.visView = new VisView(elem);
 
   }
 
+  onConfigLoad = (config) => {
+
+    App.config = config;
+
+    this.connectToServer(config.serverUrl);
+
+  }
   onServerMessage = (message) => {
 
     console.log(`Message from Server: "${message}"`);
@@ -46,19 +46,18 @@ export default class App extends React.Component {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
-      this.setState({ serverConnected: true });
+      console.log(`Server open`);
     }
     this.socket.onclose = () => {
-      this.setState({ serverConnected: false });
+      console.log(`Server close`);
     }
     this.socket.onerror = () => {
-      this.setState({ serverConnected: false });
+      console.log(`Server error`);
     }
 
     this.socket.onmessage = ({ data }) => this.onServerMessage(data);
 
   }
-
   sendToServer(message) {
 
     if (!this.socket) return;
@@ -67,13 +66,13 @@ export default class App extends React.Component {
 
   }
 
-  render() {
+  makeElem(id, elemWrap) {
 
-    if (!this.state.config) return null;
+    const elem = document.createElement('div');
+    elem.id = 'vis-view';
+    elemWrap.appendChild(elem);
 
-    return (
-      <ProjectionView />
-    );
+    return elem;
 
   }
 

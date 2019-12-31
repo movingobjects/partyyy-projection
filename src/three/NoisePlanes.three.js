@@ -42,9 +42,6 @@ export default class NoisePlanes extends THREE.Group {
 
     super();
 
-    this.timeStart    = 0;
-    this.timeElapsed  = 0;
-
     this.simplex = {
       a: new SimplexNoise(),
       b: new SimplexNoise(),
@@ -182,15 +179,10 @@ export default class NoisePlanes extends THREE.Group {
 
   }
 
-  nextFrame(timeNow) {
-
-    if (!this.timeStart) {
-      this.timeStart = timeNow;
-    }
-    this.timeElapsed = timeNow - this.timeStart;
+  nextFrame(timeNow, timeElapsed) {
 
     this.easeSettings();
-    this.updateParticles();
+    this.updateParticles(timeElapsed);
 
   }
   easeSettings() {
@@ -203,7 +195,7 @@ export default class NoisePlanes extends THREE.Group {
     ease('particles', 'size', 0.025, 0);
 
   }
-  updateParticles() {
+  updateParticles(timeElapsed) {
 
     const {
       geometry,
@@ -217,7 +209,7 @@ export default class NoisePlanes extends THREE.Group {
       noiseColor
     } = this.settings;
 
-    const secsElapsed = this.timeElapsed / 1000,
+    const secsElapsed = timeElapsed / 1000,
           verts       = geometry.attributes.position.array,
           colorRatios = geometry.attributes.colorRatio.array;
 
@@ -257,7 +249,7 @@ export default class NoisePlanes extends THREE.Group {
     geometry.attributes.position.needsUpdate   = true;
     geometry.attributes.colorRatio.needsUpdate = true;
 
-    material.uniforms.uElapsed.value      = this.timeElapsed;
+    material.uniforms.uElapsed.value      = timeElapsed;
     material.uniforms.uParticleSize.value = particles.size.cur;
 
   }
