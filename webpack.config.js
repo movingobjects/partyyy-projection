@@ -1,7 +1,8 @@
 
 const path = require('path');
 
-const CopyWebpackPlugin     = require('copy-webpack-plugin'),
+const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
+      CopyWebpackPlugin     = require('copy-webpack-plugin'),
       HtmlWebpackPlugin     = require('html-webpack-plugin'),
       MiniCssExtractPlugin  = require('mini-css-extract-plugin'),
       HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
@@ -151,7 +152,7 @@ module.exports = {
   externals: {
     react: 'React',
     'react-dom': 'ReactDOM',
-    jquery: 'jQuery'
+    three: 'THREE'
   },
 
   plugins: [
@@ -185,7 +186,11 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'resources/styles/[name].css',
       chunkFilename: '[id].css'
+    }),
+    new BundleAnalyzerPlugin({
+      openAnalyzer: false
     })
+
   ]
 
 };

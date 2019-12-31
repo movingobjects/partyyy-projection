@@ -1,6 +1,5 @@
 
 import * as React from 'react';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import ThreeComponent from './base/ThreeComponent.react';
 
