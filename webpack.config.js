@@ -158,6 +158,10 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       {
+        from: `src/include`,
+        to: '.'
+      },
+      {
         from: 'node_modules/three/build/three.min.js',
         to: './resources/externals/three/'
       },
