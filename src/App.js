@@ -44,7 +44,14 @@ export default class App {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
+
       this.debug.log(`Server connection opened`);
+
+      this.sendToServer({
+        type: 'identify',
+        group: 'projection'
+      });
+
     }
     this.socket.onclose = () => {
       this.debug.log(`Server connection closed`);
@@ -56,11 +63,11 @@ export default class App {
     this.socket.onmessage = ({ data }) => this.onServerMessage(data);
 
   }
-  sendToServer(message) {
+  sendToServer(data) {
 
     if (!this.socket) return;
 
-    this.socket.send(message)
+    this.socket.send(JSON.stringify(data));
 
   }
 
