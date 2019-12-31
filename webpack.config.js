@@ -145,6 +145,13 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.glsl$/,
+        loader: 'webpack-glsl-loader',
+        options: {
+          name: 'resources/shaders/[name].[ext]'
+        }
       }
     ]
   },
