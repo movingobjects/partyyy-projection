@@ -13,21 +13,6 @@ export default class App {
 
   }
 
-  onConfigLoad = (config) => {
-
-    App.config = config;
-
-    this.debug.log('Config loaded');
-
-    this.connectToServer(config.serverUrl);
-
-  }
-  onServerMessage = (message) => {
-
-    this.debug.log(`Message from Server: "${message}"`);
-
-  }
-
   loadConfig(path) {
 
     fetch(path)
@@ -36,6 +21,26 @@ export default class App {
       .catch((error) => {
         this.debug.log(`Error loading config: ${error}`);
       })
+
+  }
+
+  onConfigLoad = (config) => {
+
+    App.config = config;
+
+    this.debug.log('Config loaded');
+    this.debug.on = config.debugOn;
+
+    this.vis.autoAdvanceOn = config.autoAdvanceOn;
+
+    if (config.server.on) {
+      this.connectToServer(config.server.url);
+    }
+
+  }
+  onServerMessage = (message) => {
+
+    this.debug.log(`Message from Server: "${message}"`);
 
   }
 

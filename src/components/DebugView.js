@@ -8,8 +8,6 @@ export default class DebugView {
     this.elem       = elem;
     this.elemOutput = elem.querySelector('textarea#output');
 
-    this.on = true;
-
     window.addEventListener('keydown', (e) => {
       if (e.key === 'd') {
         this.elem.classList.toggle('on');

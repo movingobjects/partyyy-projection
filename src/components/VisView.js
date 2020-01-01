@@ -25,7 +25,8 @@ export default class VisView extends ThreeView {
       className: 'projection-view'
     });
 
-    this.autoAdvancing = false;
+    this.timeAutoAdvance = null;
+    this.autoAdvanceOn   = true;
 
     this.initScenes();
     this.resetCamTrgt();
@@ -49,13 +50,14 @@ export default class VisView extends ThreeView {
 
   onAnimFrame(timeNow) {
 
-    if (this.autoAdvancing) {
+    if (this.autoAdvanceOn) {
       if (!this.timeAutoAdvance) {
         const delay = random.num(AUTO_ADVANCE_INTERVAL.min, AUTO_ADVANCE_INTERVAL.max);
         this.timeAutoAdvance = timeNow + delay;
       }
       if (timeNow >= this.timeAutoAdvance) {
         this.nextScene();
+        this.timeAutoAdvance = null;
       }
     }
 

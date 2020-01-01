@@ -1,3 +1,8 @@
 {
-  "serverUrl": "ws://localhost:8089"
+  "server": {
+    "on": false,
+    "url": "ws://localhost:8089"
+  },
+  "debugOn": false,
+  "autoAdvanceOn": true
 }
