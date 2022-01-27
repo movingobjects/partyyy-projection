@@ -37,7 +37,7 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "simplex-noise": "^2.4.0",
-    "three": "^0.112.1",
+    "three": "^0.137.0",
     "varyd-utils": "^1.6.2"
   }
 }
